@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Guidance Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../project/public/style1.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #5e72e4;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --accent-light: #80d8f7;
+            --light: #f8f9ff;
+            --dark: #212529;
+            --success: #4ade80;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-700: #374151;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        
+        .chat-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        #chat-interface {
+            border: none;
+            border-radius: 16px;
+            padding: 0;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        #chat-interface:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        }
+        
+        #messages {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            background: white;
+            background-image: radial-gradient(circle at 1px 1px, var(--gray-200) 1px, transparent 0);
+            background-size: 20px 20px;
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        #messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #messages::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 10px;
+        }
+        
+        #messages::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        #messages::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            line-height: 1.6;
+            max-width: 80%;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: messageAppear 0.3s ease-out forwards;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .user-message {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+            animation-delay: 0.1s;
+        }
+        
+        .bot-message {
+            background: white;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--gray-200);
+            animation-delay: 0.2s;
+        }
+        
+        .bot-message::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-right-color: white;
+            border-left: 0;
+            margin-top: 15px;
+            filter: drop-shadow(-2px 0 1px rgba(0,0,0,0.05));
+        }
+        
+        .user-message::after {
+            content: "";
+            position: absolute;
+            right: -8px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-left-color: var(--primary);
+            border-right: 0;
+            margin-top: 15px;
+        }
+        
+        .bot-message a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 2px 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .bot-message a:hover {
+            color: var(--secondary);
+            background: rgba(67, 97, 238, 0.1);
+            text-decoration: none;
+        }
+        
+        .bot-message h3, .bot-message h4 {
+            color: var(--primary);
+            margin: 10px 0 5px;
+        }
+        
+        .bot-message ul, .bot-message ol {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+        
+        .bot-message li {
+            margin-bottom: 5px;
+        }
+        
+        #input-area {
+            display: flex;
+            gap: 12px;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            position: relative;
+        }
+        
+        #input-area::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0.7;
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: var(--gray-100);
+        }
+        
+        #user-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        #user-input::placeholder {
+            color: var(--gray-300);
+        }
+        
+        #send-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+        
+        #send-btn:hover {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(67, 97, 238, 0.25);
+        }
+        
+        #send-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
+        }
+        
+        #send-btn:disabled {
+            background: var(--gray-300);
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        #send-btn i {
+            font-size: 16px;
+        }
+        
+        .error {
+            color: white;
+            padding: 12px 16px;
+            margin: 0 20px 20px;
+            border-radius: 8px;
+            background: var(--error);
+            display: none;
+            animation: shake 0.5s;
+        }
+        
+        .typing-indicator {
+            display: inline-flex;
+            gap: 6px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+        
+        @keyframes messageAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Floating action button for quick questions */
+        .quick-questions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+        
+        .quick-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .quick-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+        
+        .quick-questions-menu {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            pointer-events: none;
+            width: 200px;
+        }
+        
+        .quick-questions-menu.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+        
+        .quick-question {
+            padding: 10px;
+            margin: 5px 0;
+            background: var(--gray-100);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .quick-question:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 1rem auto;
+                padding: 0;
+            }
+            
+            #chat-interface {
+                border-radius: 0;
+            }
+            
+            #messages {
+                height: calc(100vh - 180px);
+                padding: 15px;
+            }
+            
+            .message {
+                max-width: 90%;
+                padding: 12px 16px;
+            }
+            
+            #input-area {
+                padding: 15px;
+            }
+            
+            .quick-questions {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+        
+        /* Markdown-like formatting for bot messages */
+        .bot-message strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .bot-message em {
+            color: var(--secondary);
+            font-style: italic;
+        }
+        
+        .bot-message code {
+            background: var(--gray-100);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        
+        .bot-message pre {
+            background: var(--gray-100);
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .bot-message blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+            margin: 10px 0;
+            color: var(--gray-700);
+            font-style: italic;
+        }
+        
+        /* Pulse animation for new message indicator */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(67, 97, 238, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(67, 97, 238, 0); }
+        }
+        
+        .new-message-indicator {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-robot chatbot-icon"></i>
+            <h1> <strong>EduAsk</strong></h1>
+        </div>
+        <div class="nav-links">
+            <a href="/project/public/home.html">Home</a>
+            <a href="#" class="active">Chat Assistance</a>
+            <a href="/project/public/contact.html">Contact us</a>
+            <a href="/project/public/profile_page.html">Profile</a>
+            <a href="/project/public/login.html" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="chat-container">
+        <div id="chat-interface">
+            <div id="messages"></div>
+            <div class="new-message-indicator">New messages below</div>
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="Ask about careers, jobs, or education..." autocomplete="off">
+                <button id="send-btn"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <div class="quick-questions">
+        <button class="quick-btn" id="quick-btn"><i class="fas fa-bolt"></i></button>
+        <div class="quick-questions-menu" id="quick-menu">
+            <div class="quick-question">What are high-demand tech jobs?</div>
+            <div class="quick-question">How to start a career in data science?</div>
+            <div class="quick-question">Best degrees for future job markets</div>
+            <div class="quick-question">Salary expectations for marketing roles</div>
+        </div>
+    </div>
+
+    <script>
+        const GEMINI_API_KEY = "AIzaSyBH8XV2IkcphRaRF2U0hwgMCqsFMPdXXIk";
+        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
+  
+        // DOM Elements
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const errorDiv = document.getElementById('error');
+        const quickBtn = document.getElementById('quick-btn');
+        const quickMenu = document.getElementById('quick-menu');
+        const newMessageIndicator = document.querySelector('.new-message-indicator');
+        const quickQuestions = document.querySelectorAll('.quick-question');
+
+        // System prompt for career guidance focus
+        const systemPrompt = {
+            role: "user",
+            parts: [{
+                  text: "You are EduAsk, a dedicated professional career guidance assistant. Your responses must adhere to the following guidelines:"
+                      + "\n\n1. **Career-Centric Focus**: Only address topics related to careers, such as job opportunities, educational paths, in-demand skills, industry trends, and salary insights."
+                      + "\n\n2. **Structured Formatting**: Present information with clear headings, bullet points, and appropriate spacing for easy readability and comprehension."
+                      + "\n\n3. **Current Market Data**: Reference up-to-date job market information (as of 2024) whenever available, ensuring relevance and accuracy."
+                      + "\n\n4. **Tone and Language**: Maintain a professional yet friendly and approachable tone, suitable for users of all backgrounds."
+                      + "\n\n5. **Topic Redirection**: Politely redirect users to career-related subjects if non-career questions are asked."
+                      + "\n\n6. **Salary Guidance**: Provide salary **ranges** based on industry standards and experience levels."
+                      + "\n\n7. **Career Path Advice**: Outline the **skills, qualifications, and education** required for pursuing specific career paths."
+              }]
+        };
+
+        // Conversation history
+        let conversationHistory = [systemPrompt];
+        let isScrolledToBottom = true;
+
+        // Initial bot message
+        addMessage("Hello! I'm EduAsk, your AI career advisor. Ask me about career paths, education options, or job market trends.", false);
+
+        // Check scroll position
+        messagesDiv.addEventListener('scroll', () => {
+            const { scrollTop, scrollHeight, clientHeight } = messagesDiv;
+            isScrolledToBottom = scrollHeight - (scrollTop + clientHeight) < 50;
+            
+            if (isScrolledToBottom) {
+                newMessageIndicator.style.display = 'none';
+            }
+        });
+
+        function addMessage(content, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.innerHTML = content;
+            messagesDiv.appendChild(messageDiv);
+            
+            // Only auto-scroll if user was already at bottom
+            if (isScrolledToBottom) {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } else {
+                // Show indicator if not at bottom
+                newMessageIndicator.style.display = 'block';
+            }
+            
+            // Add animation delay based on message position
+            const messages = document.querySelectorAll('.message');
+            messages.forEach((msg, index) => {
+                msg.style.animationDelay = `${index * 0.05}s`;
+            });
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing-indicator';
+            typingDiv.id = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        async function getGeminiResponse(prompt) {
+            try {
+                // Add user message to conversation history
+                conversationHistory.push({
+                    role: "user",
+                    parts: [{ text: prompt }]
+                });
+
+                const response = await fetch(GEMINI_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        contents: conversationHistory,
+                        generationConfig: {
+                            temperature: 0.7,
+                            topP: 0.9,
+                            maxOutputTokens: 2000
+                        },
+                        safetySettings: [
+                            {
+                                "category": "HARM_CATEGORY_HARASSMENT",
+                                "threshold": "BLOCK_ONLY_HIGH"
+                            },
+                            {
+                                "category": "HARM_CATEGORY_HATE_SPEECH",
+                                "threshold": "BLOCK_ONLY_HIGH"
+                            }
+                        ]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const geminiResponse = data.candidates[0].content.parts[0].text;
+                
+                // Add model response to conversation history
+                conversationHistory.push({
+                    role: "model",
+                    parts: [{ text: geminiResponse }]
+                });
+
+                return geminiResponse;
+            } catch (error) {
+                console.error("API Error:", error);
+                throw error;
+            }
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+            sendBtn.disabled = true;
+            errorDiv.style.display = 'none';
+            showTypingIndicator();
+
+            try {
+                const botResponse = await getGeminiResponse(message);
+                addMessage(botResponse, false);
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = `Error: ${error.message}. Please try again later.`;
+                errorDiv.style.display = 'block';
+                
+                // Fallback response
+                addMessage("I'm having trouble accessing career resources right now because of network error or your question may be unrelated to career guidance. Please try asking your question again.", false);
+            } finally {
+                removeTypingIndicator();
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Quick questions functionality
+        quickBtn.addEventListener('click', () => {
+            quickMenu.classList.toggle('show');
+        });
+
+        quickQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                userInput.value = question.textContent;
+                quickMenu.classList.remove('show');
+                userInput.focus();
+            });
+        });
+
+        // Click to scroll to bottom
+        newMessageIndicator.addEventListener('click', () => {
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            newMessageIndicator.style.display = 'none';
+        });
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Close quick menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!quickBtn.contains(e.target) && !quickMenu.contains(e.target)) {
+                quickMenu.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

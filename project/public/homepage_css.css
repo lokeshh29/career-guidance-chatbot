@@ -1,0 +1,75 @@
+/* --- Search Section Styling --- */
+.search-section {
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9fafe;
+    border-radius: 16px;
+    max-width: 1100px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+    flex: 1;
+    padding: 12px 18px;
+    font-size: 16px;
+    border: 2px solid #d1e3f8;
+    border-radius: 12px;
+    background-color: #fff;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #7db2ff;
+    box-shadow: 0 0 0 3px rgba(125, 178, 255, 0.2);
+}
+
+.search-bar button {
+    padding: 12px 20px;
+    background-color: #6e9eff;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #5c8cf2;
+}
+
+/* --- Filter Dropdowns --- */
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-options select {
+    padding: 10px 16px;
+    font-size: 15px;
+    border: 2px solid #d1e3f8;
+    border-radius: 10px;
+    background-color: #fff;
+    outline: none;
+    flex: 1;
+    min-width: 160px;
+    transition: 0.3s;
+}
+
+.filter-options select:focus {
+    border-color: #7db2ff;
+    box-shadow: 0 0 0 3px rgba(125, 178, 255, 0.2);
+}
+
+/* --- Search Results --- */
+.search-results {
+    margin-top: 30px;
+}

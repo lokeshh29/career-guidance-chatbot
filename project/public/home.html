@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Search - Home</title>
+    <link rel="stylesheet" href="/project/public/homepage_css.css">
+    <link rel="stylesheet" href="/project/public/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #ff7e5f;
+            --accent: #2dd4bf;
+            --light: #f8f9ff;
+            --dark: #1e293b;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .welcome-message {
+            background: linear-gradient(135deg, var(--primary), #6a4cff);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(74, 111, 165, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-message::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 100%;
+            background: url('https://illustrations.popsy.co/amber/digital-nomad.svg') no-repeat right center;
+            background-size: contain;
+            opacity: 0.2;
+        }
+        
+        .welcome-message h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .welcome-message p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .search-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+            outline: none;
+        }
+        
+        .search-bar button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-bar button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 111, 165, 0.3);
+        }
+        
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .filter-options select {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .filter-options select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.1);
+            outline: none;
+        }
+        
+        .search-results {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        #resultsTable {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        #resultsTable th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            font-weight: 500;
+        }
+        
+        #resultsTable td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        #resultsTable tr:last-child td {
+            border-bottom: none;
+        }
+        
+        #resultsTable tr:hover td {
+            background-color: rgba(74, 111, 165, 0.05);
+            transform: scale(1.01);
+        }
+        
+        .college-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .college-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--dark);
+        }
+        
+        .college-location i {
+            color: var(--secondary);
+        }
+        
+        .college-fees {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        
+        .college-ranking {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: rgba(74, 111, 165, 0.1);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--secondary);
+            transform: scale(1.2);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .no-results i {
+            font-size: 3rem;
+            color: #e2e8f0;
+            margin-bottom: 20px;
+        }
+        
+        .no-results p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .no-results button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        /* Animations */
+        .animate-pop {
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .search-bar button {
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            #resultsTable {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-robot chatbot-icon"></i>
+            <h1> <strong>EduAsk</strong></h1>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="../chat.html">Chat Assistance</a>
+            <a href="contact.html">Contact us</a>
+            <a href="profile_page.html">Profile</a>
+            <a href="login.html" id="logoutBtn">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard">
+        <div class="welcome-message animate__animated animate__fadeIn">
+            <h2 style="color: white;">Welcome back, <span id="userName"></span>!</h2>
+            <p>Find colleges tailored to your career goals below.</p>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div class="search-section animate__animated animate__fadeInUp">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by college, course, or location..." class="animate-pop" style="animation-delay: 0.1s">
+                <button id="searchBtn" class="animate-pop" style="animation-delay: 0.2s">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+
+            <div class="filter-options">
+                <select id="courseFilter" class="animate-pop" style="animation-delay: 0.3s">
+                    <option value="">Filter by Course</option>
+                    <option value="mba">MBA</option>
+                    <option value="btech">B Tech</option>
+                    <option value="it">IT</option>
+                    <option value="others">Others</option>
+                </select>
+                <select id="scopeFilter" class="animate-pop" style="animation-delay: 0.4s">
+                    <option value="">Filter by Location</option>
+                    <option value="chennai">Chennai</option>
+                    <option value="delhi">Delhi</option>
+                    <option value="maharastra">Maharastra</option>
+                </select>
+                <select id="feeFilter" class="animate-pop" style="animation-delay: 0.5s">
+                    <option value="">Filter by Fee</option>
+                    <option value="low">Below 20,000</option>
+                    <option value="medium">20,000 - 40,000</option>
+                    <option value="high">Above 40,000</option>
+                </select>
+                <select id="rankingFilter" class="animate-pop" style="animation-delay: 0.6s">
+                    <option value="">Filter by Ranking</option>
+                    <option value="top10">Top 10</option>
+                    <option value="top50">Top 50</option>
+                    <option value="top100">Top 100</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- SEARCH RESULTS -->
+        <div id="searchResults" class="search-results animate__animated animate__fadeInUp">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>College Name</th>
+                        <th>Location</th>
+                        <th>Courses</th>
+                        <th>Fees (₹)</th>
+                        <th>Ranking</th>
+                        <th>Scope</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Results will be populated by JavaScript -->
+                </tbody>
+            </table>
+            <div id="noResults" class="no-results" style="display: none;">
+                <i class="fas fa-university"></i>
+                <p>No colleges found matching your criteria</p>
+                <button id="resetFilters">Reset Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PapaParse CDN for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
+    <!-- Your scripts -->
+    <script src="/project/database.js"></script>
+    <script src="/project/homepage_script.js"></script>
+    
+    <script>
+        // Enhanced interactive elements
+        document.addEventListener('DOMContentLoaded', () => {
+            // Display current user name
+            const currentUser = db.getCurrentUser();
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.name;
+            } else {
+                window.location.href = 'login.html';
+            }
+            
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('#resultsTable tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', () => {
+                    row.style.transform = 'translateX(5px)';
+                });
+                row.addEventListener('mouseleave', () => {
+                    row.style.transform = 'translateX(0)';
+                });
+            });
+            
+            // Reset filters button
+            document.getElementById('resetFilters')?.addEventListener('click', () => {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('courseFilter').value = '';
+                document.getElementById('scopeFilter').value = '';
+                document.getElementById('feeFilter').value = '';
+                document.getElementById('rankingFilter').value = '';
+                document.getElementById('searchBtn').click();
+            });
+            
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                db.logout();
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+</html>
